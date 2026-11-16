@@ -1,0 +1,16 @@
+{
+  "hosting": {
+    "site": "xdicitech",
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      ".firebaserc",
+      ".git",
+      ".gitignore",
+      "README.md",
+      "**/.*"
+    ],
+    "cleanUrls": true,
+    "trailingSlash": false
+  }
+}
