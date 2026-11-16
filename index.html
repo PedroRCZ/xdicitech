@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>xDiciTech | Desarrollo Web, Diseño & Automatización en Machala</title>
+    <meta name="description" content="Estudio de Ingeniería y Creatividad Digital en Machala por Pedro Cruz. Desarrollo Web Full-Stack, Diseño Gráfico + Motion IA y Proyectos de Electrónica & Automatización IoT.">
+    
+    <!-- Google Fonts: Space Grotesk, Plus Jakarta Sans, JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Tailwind Configuración Personalizada -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        space: {
+                            950: '#040911',
+                            900: '#060E1A',
+                            800: '#0A1628',
+                            700: '#10223E',
+                        },
+                        electric: {
+                            400: '#3B82F6',
+                            500: '#0066FF',
+                            600: '#0052CC',
+                        },
+                        energy: {
+                            400: '#FF8533',
+                            500: '#FF6B00',
+                            600: '#CC5500',
+                        }
+                    },
+                    fontFamily: {
+                        display: ['"Space Grotesk"', 'sans-serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Hoja de Estilos de Producción -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-space-900 bg-space-grid antialiased selection:bg-electric-500 selection:text-white relative">
+
+    <!-- Canvas de Estrellas & Warp Reactivo a la Velocidad del Scroll -->
+    <canvas id="warp-canvas" class="fixed inset-0 w-full h-full pointer-events-none z-0 opacity-85"></canvas>
+
+    <!-- Luces ambientales con Parallax -->
+    <div id="nebula-top" class="fixed top-[-150px] left-[-150px] w-[480px] h-[480px] rounded-full bg-electric-500/15 blur-[130px] pointer-events-none z-0 transition-transform duration-75"></div>
+    <div id="nebula-bottom" class="fixed bottom-[-180px] right-[-120px] w-[450px] h-[450px] rounded-full bg-energy-500/10 blur-[140px] pointer-events-none z-0 transition-transform duration-75"></div>
+
+    <!-- Línea guía de circuito lateral que se ilumina con el scroll -->
+    <div class="hidden xl:flex fixed left-5 top-1/2 -translate-y-1/2 z-30 flex-col items-center gap-2 pointer-events-none">
+        <span class="font-mono text-[9px] text-electric-400 tracking-widest rotate-180" style="writing-mode: vertical-rl;">TELEMETRÍA SCROLL</span>
+        <div class="w-1 h-44 bg-space-800/90 rounded-full overflow-hidden border border-electric-500/20 relative">
+            <div id="side-circuit-fill" class="w-full bg-gradient-to-b from-electric-400 via-electric-500 to-energy-500 rounded-full transition-all duration-75" style="height: 0%;"></div>
+        </div>
+        <span id="side-scroll-pct" class="font-mono text-[10px] font-bold text-energy-400">0%</span>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- BARRA DE NAVEGACIÓN STICKY + LÁSER SCROLL  -->
+    <!-- ========================================== -->
+    <header class="sticky top-0 z-40 w-full backdrop-blur-xl bg-space-950/80 border-b border-electric-500/20">
+        <!-- Barra Láser Superior de Progreso de Scroll -->
+        <div class="w-full h-[3px] bg-space-900 overflow-hidden relative">
+            <div id="scroll-progress-bar" class="h-full w-0 bg-gradient-to-r from-electric-500 via-cyan-400 to-energy-500 shadow-[0_0_12px_#0066FF] transition-all duration-75"></div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            
+            <!-- Logo xDiciTech SVG Reconstruido -->
+            <a href="#" class="flex items-center gap-3 group focus:outline-none">
+                <div class="w-11 h-11 relative flex items-center justify-center logo-glow transition-transform duration-300 group-hover:scale-105">
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <circle cx="50" cy="50" r="46" fill="#050B14" stroke="#0066FF" stroke-width="4.5" />
+                        <polygon points="18,18 47,44 82,82 53,56" fill="#0066FF" />
+                        <path d="M58 28 C64 22, 73 22, 78 27 C83 32, 83 41, 77 47 L67 57 L52 42 Z" fill="#FFFFFF" />
+                        <circle cx="63" cy="46" r="4.2" fill="#0066FF" />
+                        <path d="M42 72 C36 78, 27 78, 22 73 C17 68, 17 59, 23 53 L33 43 L48 58 Z" fill="#FFFFFF" />
+                        <circle cx="37" cy="54" r="4.2" fill="#0066FF" />
+                        <circle cx="50" cy="50" r="8" fill="#FFFFFF" stroke="#050B14" stroke-width="2.5" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="font-display font-bold text-xl tracking-tight text-white">xDici<span class="text-electric-500">Tech</span></span>
+                        <span class="hidden sm:inline-block text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-electric-500/15 text-electric-400 border border-electric-500/30">Machala</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 font-mono tracking-wider">WEB • DISEÑO IA • IOT</p>
+                </div>
+            </a>
+
+            <!-- Enlaces Desktop -->
+            <nav class="hidden md:flex items-center gap-7 text-sm font-medium text-slate-300">
+                <a href="#adn" class="hover:text-electric-400 transition-colors">ADN</a>
+                <a href="#tecnologias" class="hover:text-electric-400 transition-colors">Tecnologías</a>
+                <a href="#servicios" class="hover:text-electric-400 transition-colors">Los 3 Pilares</a>
+                <a href="#simulador-iot" class="hover:text-energy-400 transition-colors flex items-center gap-1">
+                    <i class="ph-fill ph-cpu text-energy-500"></i> Demo IoT
+                </a>
+                <a href="#portafolio" class="hover:text-electric-400 transition-colors">Portafolio</a>
+                <a href="#cotizador" class="hover:text-electric-400 transition-colors">Cotizador</a>
+            </nav>
+
+            <!-- Telemetría + Botones de Acción -->
+            <div class="flex items-center gap-2.5">
+                <!-- Indicador de Telemetría de Scroll en Vivo -->
+                <div class="hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-space-900/90 border border-slate-800 font-mono text-[11px] text-slate-400">
+                    <span class="w-1.5 h-1.5 rounded-full bg-electric-400 animate-pulse"></span>
+                    <span>SCROLL:</span>
+                    <span id="nav-scroll-telemetry" class="text-electric-400 font-bold w-8 text-right">00%</span>
+                </div>
+
+                <button onclick="toggleBioModal(true)" class="px-3.5 py-2 rounded-xl bg-space-800 hover:bg-space-700 text-xs sm:text-sm font-mono text-slate-200 border border-electric-500/30 flex items-center gap-2 transition-all hover:border-electric-400" title="Vista rápida para biografía de Instagram">
+                    <i class="ph-bold ph-device-mobile text-electric-400 text-base"></i>
+                    <span class="hidden sm:inline">Modo Bio IG</span>
+                    <span class="sm:hidden">Links</span>
+                </button>
+                <a href="#cotizador" class="px-4 py-2.5 rounded-xl bg-electric-500 hover:bg-electric-600 text-white font-display font-semibold text-xs sm:text-sm shadow-lg shadow-electric-500/25 flex items-center gap-2 transition-all">
+                    <span>Cotizar</span>
+                    <i class="ph-bold ph-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ========================================== -->
+    <!-- SECCIÓN 1: HERO & CENTRO DE CONTROL        -->
+    <!-- ========================================== -->
+    <main class="relative z-10">
+        <section class="pt-10 pb-20 md:pt-16 md:pb-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                
+                <!-- Columna Izquierda: Propuesta de Valor con Scroll Reveal -->
+                <div class="lg:col-span-7 space-y-6" data-reveal="left">
+                    <div class="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-space-800/90 border border-electric-500/30 text-xs font-mono text-electric-400">
+                        <span class="w-2 h-2 rounded-full bg-energy-500 animate-ping"></span>
+                        <span>PEDRO CRUZ • INGENIERÍA & CREATIVIDAD DIGITAL EN MACHALA</span>
+                    </div>
+
+                    <h1 class="font-display font-bold text-4xl sm:text-5xl lg:text-6xl leading-[1.08] tracking-tight text-white">
+                        Creatividad, Código & <span class="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 via-electric-500 to-energy-500">Automatización</span> para marcas que no temen destacar.
+                    </h1>
+
+                    <p class="text-slate-300 text-base sm:text-lg leading-relaxed max-w-2xl">
+                        Más que una agencia tradicional: fusionamos <strong class="text-white font-semibold">Desarrollo Web Full-Stack</strong>, <strong class="text-white font-semibold">Diseño Publicitario + Motion IA</strong> y <strong class="text-white font-semibold">Electrónica / IoT</strong> para digitalizar y automatizar negocios en El Oro y todo Ecuador.
+                    </p>
+
+                    <!-- CTAs Principales -->
+                    <div class="flex flex-wrap items-center gap-4 pt-2">
+                        <a href="#cotizador" class="px-6 py-4 rounded-2xl bg-gradient-to-r from-electric-500 to-electric-600 hover:from-electric-400 hover:to-electric-500 text-white font-display font-bold text-base shadow-xl shadow-electric-500/25 flex items-center gap-3 transition-all transform hover:-translate-y-0.5">
+                            <i class="ph-fill ph-rocket-launch text-xl"></i>
+                            <span>Cotizar Proyecto en 3 Clics</span>
+                        </a>
+                        <a href="#portafolio" class="px-6 py-4 rounded-2xl glass-card text-slate-200 hover:text-white font-display font-semibold text-base flex items-center gap-2.5 transition-all">
+                            <i class="ph-bold ph-folders text-electric-400 text-xl"></i>
+                            <span>Explorar Portafolio</span>
+                        </a>
+                    </div>
+
+                    <!-- Mini indicadores con Contadores Animados -->
+                    <div class="pt-4 grid grid-cols-3 gap-4 border-t border-slate-800/80 max-w-xl">
+                        <div>
+                            <p class="font-display font-bold text-xl sm:text-2xl text-white">
+                                <span data-counter="100" data-suffix="%">100%</span> <span class="text-electric-400 text-sm font-mono">Código</span>
+                            </p>
+                            <p class="text-xs text-slate-400">Webs ultrarrápidas a medida</p>
+                        </div>
+                        <div>
+                            <p class="font-display font-bold text-xl sm:text-2xl text-white">
+                                <span data-counter="60" data-suffix=" FPS">60 FPS</span> <span class="text-energy-500 text-sm font-mono">& IA</span>
+                            </p>
+                            <p class="text-xs text-slate-400">Impacto visual comercial</p>
+                        </div>
+                        <div>
+                            <p class="font-display font-bold text-xl sm:text-2xl text-white">
+                                <span data-counter="24" data-suffix="/7">24/7</span> <span class="text-emerald-400 text-sm font-mono">IoT</span>
+                            </p>
+                            <p class="text-xs text-slate-400">Electrónica y sensores reales</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Columna Derecha: Consola Interactiva xDiciTech con Reveal 3D -->
+                <div class="lg:col-span-5" data-reveal="right" style="--delay: 140ms;">
+                    <div class="glass-card tilt-card rounded-3xl p-5 sm:p-6 border border-electric-500/30 shadow-2xl relative overflow-hidden">
+                        <!-- Barra superior de la consola -->
+                        <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-800">
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-rose-500/80"></span>
+                                <span class="w-3 h-3 rounded-full bg-amber-500/80"></span>
+                                <span class="w-3 h-3 rounded-full bg-emerald-500/80"></span>
+                                <span class="ml-2 font-mono text-xs text-slate-400">xdicitech_core.sys</span>
+                            </div>
+                            <span class="px-2.5 py-0.5 rounded-md bg-electric-500/15 text-electric-400 font-mono text-[11px] border border-electric-500/30">EN LÍNEA</span>
+                        </div>
+
+                        <!-- Selector de los 3 núcleos en vivo -->
+                        <div class="grid grid-cols-3 gap-2 p-1 rounded-xl bg-space-950/90 border border-slate-800 mb-5">
+                            <button onclick="switchHeroTab('design')" id="hero-tab-design" class="py-2 px-2 rounded-lg font-mono text-xs font-semibold transition-all bg-energy-500 text-white flex items-center justify-center gap-1.5 shadow-lg shadow-energy-500/25">
+                                <i class="ph-bold ph-sparkle"></i> Diseño IA
+                            </button>
+                            <button onclick="switchHeroTab('web')" id="hero-tab-web" class="py-2 px-2 rounded-lg font-mono text-xs font-semibold transition-all text-slate-400 hover:text-white flex items-center justify-center gap-1.5">
+                                <i class="ph-bold ph-code"></i> Web
+                            </button>
+                            <button onclick="switchHeroTab('iot')" id="hero-tab-iot" class="py-2 px-2 rounded-lg font-mono text-xs font-semibold transition-all text-slate-400 hover:text-white flex items-center justify-center gap-1.5">
+                                <i class="ph-bold ph-circuitry"></i> Hardware
+                            </button>
+                        </div>
+
+                        <!-- Vista 1: Diseño Gráfico & Motion IA (Activa por defecto para impacto inmediato) -->
+                        <div id="hero-panel-design" class="space-y-4">
+                            <!-- Video Preview Cinemático Autoplay en el Hero -->
+                            <div class="relative rounded-2xl overflow-hidden aspect-video bg-space-950 border border-energy-500/40 shadow-xl group">
+                                <video src="videos/stranger_things_machala.mp4" poster="videos/stranger_things_machala.jpg" autoplay loop muted playsinline class="w-full h-full object-cover"></video>
+                                <div class="absolute inset-0 bg-gradient-to-t from-space-950/90 via-transparent to-black/30 pointer-events-none"></div>
+                                <div class="absolute top-2.5 left-2.5">
+                                    <span class="px-2.5 py-0.5 rounded-full bg-space-950/80 backdrop-blur-md border border-energy-500/50 text-energy-400 font-mono text-[10px] flex items-center gap-1.5 shadow-lg">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-energy-500 animate-ping"></span>
+                                        VEO 3.1 + AFTER EFFECTS
+                                    </span>
+                                </div>
+                                <div class="absolute bottom-2.5 left-3 right-3 flex items-center justify-between">
+                                    <div>
+                                        <p class="font-display font-bold text-xs sm:text-sm text-white drop-shadow-md">Stranger Things x Machala</p>
+                                        <p class="text-[10px] text-slate-300 font-mono">Reel Viral en @xdicitech</p>
+                                    </div>
+                                    <a href="https://www.instagram.com/xdicitech/reel/DRh56HCjPyJ/" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 rounded-lg bg-energy-500 hover:bg-energy-400 text-white font-mono text-[11px] font-semibold flex items-center gap-1 transition-all shadow-md shadow-energy-500/20">
+                                        <i class="ph-fill ph-play-circle"></i>
+                                        <span>Ver Reel</span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="bg-gradient-to-br from-space-950 via-space-800 to-energy-600/20 rounded-2xl p-4 border border-energy-500/30">
+                                <p class="font-display font-bold text-base text-white mb-1">"Videos imposibles... ahora son reales con IA"</p>
+                                <p class="text-xs text-slate-300 leading-relaxed mb-3">Producciones comerciales de nivel cinematográfico que antes costaban miles de dólares, ahora al alcance de negocios en Machala y Ecuador.</p>
+                                
+                                <div class="flex items-center gap-2 pt-1 border-t border-slate-800">
+                                    <a href="#portafolio" class="px-3 py-1.5 rounded-xl bg-space-900 hover:bg-space-800 text-energy-400 font-mono text-xs border border-energy-500/30 flex items-center gap-1 transition-all">
+                                        <i class="ph-bold ph-film-strip"></i>
+                                        <span>Explorar 3 Videos del Portafolio</span>
+                                        <i class="ph-bold ph-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="p-3.5 rounded-2xl bg-space-800/70 border border-slate-700/60">
+                                    <span class="text-[11px] font-mono text-slate-400">REELS COMERCIALES</span>
+                                    <p class="font-display font-bold text-lg text-energy-400 mt-0.5">VFX + IA</p>
+                                    <span class="text-[11px] text-slate-400">Retención visual masiva</span>
+                                </div>
+                                <div class="p-3.5 rounded-2xl bg-space-800/70 border border-slate-700/60">
+                                    <span class="text-[11px] font-mono text-slate-400">BRANDING & LOGOS</span>
+                                    <p class="font-display font-bold text-lg text-white mt-0.5">Vectorial Pro</p>
+                                    <span class="text-[11px] text-slate-400">Manual de marca completo</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Vista 2: Desarrollo Web -->
+                        <div id="hero-panel-web" class="hidden space-y-4">
+                            <div class="bg-space-950 rounded-2xl p-4 font-mono text-xs border border-slate-800/90 space-y-2">
+                                <div class="flex justify-between text-slate-500">
+                                    <span>// Despliegue de Ecosistema Web</span>
+                                    <span class="text-emerald-400">99/100 Speed</span>
+                                </div>
+                                <p class="text-electric-400">const <span class="text-white">negocioMachala</span> = {</p>
+                                <p class="pl-4 text-slate-300">arquitectura: <span class="text-energy-400">'PWA + Firebase / Full-Stack'</span>,</p>
+                                <p class="pl-4 text-slate-300">catalogoDigital: <span class="text-emerald-400">true</span>,</p>
+                                <p class="pl-4 text-slate-300">embudoWhatsApp: <span class="text-energy-400">'Automatizado 24/7'</span></p>
+                                <p class="text-electric-400">};</p>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="p-3.5 rounded-2xl bg-space-800/70 border border-slate-700/60">
+                                    <span class="text-[11px] font-mono text-slate-400">VELOCIDAD DE CARGA</span>
+                                    <p class="font-display font-bold text-2xl text-emerald-400 mt-0.5">0.4 seg</p>
+                                    <span class="text-[11px] text-slate-400">Optimizado para datos móviles</span>
+                                </div>
+                                <div class="p-3.5 rounded-2xl bg-space-800/70 border border-slate-700/60">
+                                    <span class="text-[11px] font-mono text-slate-400">CONVERSIÓN DIRECTA</span>
+                                    <p class="font-display font-bold text-2xl text-electric-400 mt-0.5">+<span data-counter="300" data-suffix="%">300%</span></p>
+                                    <span class="text-[11px] text-slate-400">Cero fricción hacia WhatsApp</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Vista 3: Electrónica & Automatización IoT -->
+                        <div id="hero-panel-iot" class="hidden space-y-4">
+                            <div class="bg-space-950 rounded-2xl p-4 font-mono text-xs border border-emerald-500/30 space-y-2.5">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-emerald-400 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> ESP32 / Microcontrolador</span>
+                                    <span class="text-slate-400">WiFi + MQTT</span>
+                                </div>
+                                <div class="w-full bg-space-800 h-2 rounded-full overflow-hidden">
+                                    <div class="bg-gradient-to-r from-electric-500 to-emerald-400 h-full w-4/5"></div>
+                                </div>
+                                <p class="text-slate-300 text-[11px]">Conectamos sensores físicos, relés, iluminación y maquinaria directamente a un panel de control en tu teléfono.</p>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="p-3.5 rounded-2xl bg-space-800/70 border border-slate-700/60">
+                                    <span class="text-[11px] font-mono text-slate-400">DOMÓTICA COMERCIAL</span>
+                                    <p class="font-display font-bold text-lg text-emerald-400 mt-0.5">Control Total</p>
+                                    <span class="text-[11px] text-slate-400">Luces, accesos y sensores</span>
+                                </div>
+                                <div class="p-3.5 rounded-2xl bg-space-800/70 border border-slate-700/60">
+                                    <span class="text-[11px] font-mono text-slate-400">PROTOTIPOS PCB</span>
+                                    <p class="font-display font-bold text-lg text-electric-400 mt-0.5">A Medida</p>
+                                    <span class="text-[11px] text-slate-400">Hardware + Software</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pie de la tarjeta interactiva -->
+                        <div class="mt-5 pt-4 border-t border-slate-800/90 flex items-center justify-between text-xs">
+                            <span class="text-slate-400 font-mono">¿Listo para despegar tu marca?</span>
+                            <a href="#simulador-iot" class="text-energy-400 hover:text-energy-300 font-semibold flex items-center gap-1">
+                                <span>Probar Simulador IoT</span>
+                                <i class="ph-bold ph-caret-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- SECCIÓN 2: EL ADN XDICITECH (ACRÓNIMO)     -->
+        <!-- ========================================== -->
+        <section id="adn" class="py-16 border-y border-electric-500/15 bg-space-950/60 relative overflow-hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4" data-reveal="up">
+                    <div>
+                        <span class="font-mono text-xs uppercase tracking-widest text-energy-500 font-semibold">// EL ORIGEN DE NUESTRO NOMBRE</span>
+                        <h2 class="font-display font-bold text-2xl sm:text-4xl text-white mt-1">
+                            "No, nuestro <span class="text-electric-500">xD</span> no es un emoticono."
+                        </h2>
+                    </div>
+                    <p class="text-slate-400 text-sm max-w-md">
+                        Es la fórmula exacta entre mentalidad aeroespacial, impacto visual, rigor científico y desarrollo tecnológico aplicado a negocios reales.
+                    </p>
+                </div>
+
+                <!-- Línea de Circuito SVG que se dibuja al hacer scroll conectando los 4 bloques -->
+                <div class="hidden lg:block absolute left-8 right-8 top-[62%] -translate-y-1/2 pointer-events-none z-0">
+                    <svg viewBox="0 0 1200 40" class="w-full h-10 overflow-visible">
+                        <defs>
+                            <linearGradient id="adnGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="#0066FF" />
+                                <stop offset="50%" stop-color="#FF6B00" />
+                                <stop offset="100%" stop-color="#10B981" />
+                            </linearGradient>
+                        </defs>
+                        <path id="adn-svg-path" class="adn-circuit-line" d="M 40 20 L 340 20 L 360 8 L 620 8 L 640 20 L 920 20 L 940 32 L 1160 32" fill="none" stroke="url(#adnGrad)" stroke-width="2.5" stroke-linecap="round" />
+                    </svg>
+                </div>
+
+                <!-- 4 Bloques del Acrónimo con entrada escalonada (Staggered Reveal) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 relative z-10">
+                    <!-- SpaceX -->
+                    <div class="glass-card tilt-card rounded-2xl p-6 relative overflow-hidden group" data-reveal="scale" style="--delay: 0ms;">
+                        <div class="flex items-center justify-between text-xs font-mono text-slate-400 mb-2">
+                            <span>01 / VISIÓN</span>
+                            <span class="w-2 h-2 rounded-full bg-electric-500"></span>
+                        </div>
+                        <div class="font-display font-bold text-3xl text-white tracking-tight mb-2">
+                            Space<span class="text-energy-500">X</span>
+                        </div>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            Mentalidad de innovación sin límites. No copiamos plantillas genéricas; diseñamos soluciones con estética y ambición futurista.
+                        </p>
+                    </div>
+
+                    <!-- Diseño -->
+                    <div class="glass-card tilt-card rounded-2xl p-6 relative overflow-hidden group" data-reveal="scale" style="--delay: 130ms;">
+                        <div class="flex items-center justify-between text-xs font-mono text-slate-400 mb-2">
+                            <span>02 / ESTÉTICA</span>
+                            <span class="w-2 h-2 rounded-full bg-energy-500"></span>
+                        </div>
+                        <div class="font-display font-bold text-3xl text-white tracking-tight mb-2">
+                            <span class="text-energy-500">Di</span>seño
+                        </div>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            Comunicación visual que detiene el scroll. Branding estratégico, UI/UX moderno, Motion Graphics y producción asistida con IA.
+                        </p>
+                    </div>
+
+                    <!-- Ciencia -->
+                    <div class="glass-card tilt-card rounded-2xl p-6 relative overflow-hidden group" data-reveal="scale" style="--delay: 260ms;">
+                        <div class="flex items-center justify-between text-xs font-mono text-slate-400 mb-2">
+                            <span>03 / MÉTODO</span>
+                            <span class="w-2 h-2 rounded-full bg-electric-400"></span>
+                        </div>
+                        <div class="font-display font-bold text-3xl text-white tracking-tight mb-2">
+                            <span class="text-energy-500">Ci</span>encia
+                        </div>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            Análisis lógico y resolución de problemas. Cada línea de código, circuito o campaña publicitaria tiene un propósito medible.
+                        </p>
+                    </div>
+
+                    <!-- Technology -->
+                    <div class="glass-card tilt-card rounded-2xl p-6 relative overflow-hidden group" data-reveal="scale" style="--delay: 390ms;">
+                        <div class="flex items-center justify-between text-xs font-mono text-slate-400 mb-2">
+                            <span>04 / INGENIERÍA</span>
+                            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                        </div>
+                        <div class="font-display font-bold text-3xl text-white tracking-tight mb-2">
+                            <span class="text-energy-500">Tech</span>nology
+                        </div>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            Dominio transversal de software y hardware: desde aplicaciones web progresivas (PWA) hasta automatización electrónica e IoT.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- SECCIÓN: TECNOLOGÍAS & HERRAMIENTAS        -->
+        <!-- ========================================== -->
+        <section id="tecnologias" class="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-b border-electric-500/15">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4" data-reveal="up">
+                <div>
+                    <span class="font-mono text-xs uppercase tracking-widest text-energy-500 font-semibold">// ARSENAL TECNOLÓGICO & CREATIVO</span>
+                    <h2 class="font-display font-bold text-3xl sm:text-4xl text-white mt-1">
+                        Herramientas de Vanguardia <span class="text-electric-500">para Proyectos de Alto Impacto</span>
+                    </h2>
+                </div>
+                <p class="text-slate-400 text-sm max-w-md">
+                    No dependemos de plantillas genéricas. Dominamos las tecnologías que marcan la pauta mundial en inteligencia artificial, producción audiovisual, desarrollo web y hardware.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                <!-- Google Veo 3.1 -->
+                <div class="glass-card tilt-card rounded-2xl p-6 border border-energy-500/35 relative overflow-hidden group" data-reveal="up" style="--delay: 0ms;">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="px-2.5 py-0.5 rounded-full bg-energy-500/20 text-energy-400 font-mono text-[11px] border border-energy-500/40">IA GENERATIVA</span>
+                        <div class="w-10 h-10 rounded-xl bg-space-800 border border-energy-500/40 flex items-center justify-center text-energy-400 group-hover:scale-110 transition-transform">
+                            <i class="ph-duotone ph-video-camera text-2xl"></i>
+                        </div>
+                    </div>
+                    <h3 class="font-display font-bold text-xl text-white group-hover:text-energy-400 transition-colors mb-2">Google Veo 3.1</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed mb-3">
+                        Generación de video cinematográfico de ultra alta definición con física visual y coherencia hiperrealista. Comerciales imposibles sin costes de rodaje tradicional.
+                    </p>
+                    <span class="text-[11px] font-mono text-energy-400/90 flex items-center gap-1">
+                        <i class="ph-bold ph-check"></i> Producción de video comercial
+                    </span>
+                </div>
+
+                <!-- Adobe After Effects -->
+                <div class="glass-card tilt-card rounded-2xl p-6 border border-electric-500/35 relative overflow-hidden group" data-reveal="up" style="--delay: 100ms;">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="px-2.5 py-0.5 rounded-full bg-electric-500/20 text-electric-400 font-mono text-[11px] border border-electric-500/40">MOTION & VFX</span>
+                        <div class="w-10 h-10 rounded-xl bg-space-800 border border-electric-500/40 flex items-center justify-center text-electric-400 group-hover:scale-110 transition-transform">
+                            <i class="ph-duotone ph-sparkle text-2xl"></i>
+                        </div>
+                    </div>
+                    <h3 class="font-display font-bold text-xl text-white group-hover:text-electric-400 transition-colors mb-2">After Effects</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed mb-3">
+                        Composición digital avanzada, Motion Graphics a 60 FPS, kinetic typography y edición de sonido para retener la atención en los primeros 3 segundos.
+                    </p>
+                    <span class="text-[11px] font-mono text-electric-400/90 flex items-center gap-1">
+                        <i class="ph-bold ph-check"></i> Animación 60 FPS & VFX
+                    </span>
+                </div>
+
+                <!-- Runway Gen-3 -->
+                <div class="glass-card tilt-card rounded-2xl p-6 border border-purple-500/35 relative overflow-hidden group" data-reveal="up" style="--delay: 200ms;">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="px-2.5 py-0.5 rounded-full bg-purple-500/20 text-purple-400 font-mono text-[11px] border border-purple-500/40">SÍNTESIS VISUAL</span>
+                        <div class="w-10 h-10 rounded-xl bg-space-800 border border-purple-500/40 flex items-center justify-center text-purple-400 group-hover:scale-110 transition-transform">
+                            <i class="ph-duotone ph-film-strip text-2xl"></i>
+                        </div>
+                    </div>
+                    <h3 class="font-display font-bold text-xl text-white group-hover:text-purple-400 transition-colors mb-2">Runway</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed mb-3">
+                        Control de cámara cinematográfico, transformaciones de video y dirección artística asistida para anuncios y campañas de impacto viral.
+                    </p>
+                    <span class="text-[11px] font-mono text-purple-400/90 flex items-center gap-1">
+                        <i class="ph-bold ph-check"></i> Cinematografía generativa
+                    </span>
+                </div>
+
+                <!-- Blender / 3D & CGI -->
+                <div class="glass-card tilt-card rounded-2xl p-6 border border-amber-500/35 relative overflow-hidden group" data-reveal="up" style="--delay: 300ms;">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 font-mono text-[11px] border border-amber-500/40">CGI & 3D</span>
+                        <div class="w-10 h-10 rounded-xl bg-space-800 border border-amber-500/40 flex items-center justify-center text-amber-400 group-hover:scale-110 transition-transform">
+                            <i class="ph-duotone ph-cube text-2xl"></i>
+                        </div>
+                    </div>
+                    <h3 class="font-display font-bold text-xl text-white group-hover:text-amber-400 transition-colors mb-2">Blender / 3D</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed mb-3">
+                        Modelado tridimensional, iluminación volumétrica, renders de producto fotorrealistas e integración de elementos visuales que desafían la realidad.
+                    </p>
+                    <span class="text-[11px] font-mono text-amber-400/90 flex items-center gap-1">
+                        <i class="ph-bold ph-check"></i> Renders 3D fotorrealistas
+                    </span>
+                </div>
+
+                <!-- Tailwind CSS & Web Stack -->
+                <div class="glass-card tilt-card rounded-2xl p-6 border border-cyan-500/35 relative overflow-hidden group" data-reveal="up" style="--delay: 400ms;">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 font-mono text-[11px] border border-cyan-500/40">FRONTEND MODERNO</span>
+                        <div class="w-10 h-10 rounded-xl bg-space-800 border border-cyan-500/40 flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform">
+                            <i class="ph-duotone ph-browsers text-2xl"></i>
+                        </div>
+                    </div>
+                    <h3 class="font-display font-bold text-xl text-white group-hover:text-cyan-400 transition-colors mb-2">Tailwind CSS</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed mb-3">
+                        Arquitectura web moderna con carga ultrarrápida (0.4s), interfaces reactivas sin código innecesario y experiencia fluida en celulares y tablets.
+                    </p>
+                    <span class="text-[11px] font-mono text-cyan-400/90 flex items-center gap-1">
+                        <i class="ph-bold ph-check"></i> Carga rápida y diseño responsivo
+                    </span>
+                </div>
+
+                <!-- ESP32 & IoT Hardware -->
+                <div class="glass-card tilt-card rounded-2xl p-6 border border-emerald-500/35 relative overflow-hidden group" data-reveal="up" style="--delay: 500ms;">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-mono text-[11px] border border-emerald-500/40">HARDWARE & IOT</span>
+                        <div class="w-10 h-10 rounded-xl bg-space-800 border border-emerald-500/40 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
+                            <i class="ph-duotone ph-cpu text-2xl"></i>
+                        </div>
+                    </div>
+                    <h3 class="font-display font-bold text-xl text-white group-hover:text-emerald-400 transition-colors mb-2">ESP32 & Sensores</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed mb-3">
+                        Microcontroladores con conectividad WiFi/Bluetooth, relés para cargas de potencia y telemetría de sensores ambientales en tiempo real.
+                    </p>
+                    <span class="text-[11px] font-mono text-emerald-400/90 flex items-center gap-1">
+                        <i class="ph-bold ph-check"></i> Automatización y control físico
+                    </span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- SECCIÓN 3: LOS 3 PILARES (BENTO GRID)      -->
+        <!-- ========================================== -->
+        <section id="servicios" class="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+            <div class="text-center max-w-3xl mx-auto mb-14" data-reveal="up">
+                <span class="px-3.5 py-1.5 rounded-full bg-electric-500/15 border border-electric-500/30 text-electric-400 font-mono text-xs">
+                    SOLUCIONES INTEGRALES EN UN SOLO ESTUDIO
+                </span>
+                <h2 class="font-display font-bold text-3xl sm:text-5xl text-white mt-4 tracking-tight">
+                    Tres disciplinas. <span class="text-electric-500">Un ecosistema completo.</span>
+                </h2>
+                <p class="text-slate-400 mt-3 text-base sm:text-lg">
+                    ¿Por qué contratar a un programador, un diseñador y un técnico por separado cuando puedes tener todo sincronizado bajo una misma dirección creativa y técnica?
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-7">
+                
+                <!-- PILAR 1: DESARROLLO WEB -->
+                <div class="glass-card tilt-card rounded-3xl p-7 sm:p-8 flex flex-col justify-between relative overflow-hidden group" data-reveal="up" style="--delay: 0ms;">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-electric-500/15 border border-electric-500/40 flex items-center justify-center text-electric-400 text-3xl mb-6 group-hover:scale-110 transition-transform">
+                            <i class="ph-duotone ph-code-block"></i>
+                        </div>
+                        <span class="font-mono text-xs text-electric-400 uppercase tracking-wider">PILAR 01 // SOFTWARE</span>
+                        <h3 class="font-display font-bold text-2xl text-white mt-1 mb-3">Desarrollo Web & Sistemas Digitales</h3>
+                        <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                            Diseñamos y programamos sitios web ultrarrápidos, catálogos interactivos y aplicaciones web progresivas (PWA) enfocadas en convertir visitantes en clientes por WhatsApp.
+                        </p>
+
+                        <ul class="space-y-3 text-sm text-slate-300 mb-8">
+                            <li class="flex items-start gap-2.5">
+                                <i class="ph-fill ph-check-circle text-electric-500 text-lg shrink-0 mt-0.5"></i>
+                                <span><strong>Landing Pages de Alta Conversión</strong> optimizadas para móviles y anuncios.</span>
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <i class="ph-fill ph-check-circle text-electric-500 text-lg shrink-0 mt-0.5"></i>
+                                <span><strong>Sistemas PWA & Fidelización Digital</strong> (tarjetas QR, catálogos con carrito a WhatsApp).</span>
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <i class="ph-fill ph-check-circle text-electric-500 text-lg shrink-0 mt-0.5"></i>
+                                <span><strong>Dashboards & Paneles Administrativos</strong> en tiempo real con Firebase / Cloud.</span>
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <i class="ph-fill ph-check-circle text-electric-500 text-lg shrink-0 mt-0.5"></i>
+                                <span><strong>Reemplazo Profesional de Linktree</strong> con el dominio propio de tu empresa.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <button onclick="selectServiceAndScroll('Desarrollo Web & Sistemas')" class="w-full py-3.5 px-5 rounded-xl bg-electric-500/15 hover:bg-electric-500 text-electric-400 hover:text-white border border-electric-500/40 font-display font-semibold text-sm flex items-center justify-center gap-2 transition-all">
+                        <span>Cotizar Desarrollo Web</span>
+                        <i class="ph-bold ph-arrow-up-right"></i>
+                    </button>
+                </div>
+
+                <!-- PILAR 2: DISEÑO GRÁFICO, MOTION & IA -->
+                <div class="glass-card glass-card-orange tilt-card rounded-3xl p-7 sm:p-8 flex flex-col justify-between relative overflow-hidden group" data-reveal="up" style="--delay: 150ms;">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-energy-500/15 border border-energy-500/40 flex items-center justify-center text-energy-400 text-3xl mb-6 group-hover:scale-110 transition-transform">
+                            <i class="ph-duotone ph-magic-wand"></i>
+                        </div>
+                        <span class="font-mono text-xs text-energy-400 uppercase tracking-wider">PILAR 02 // CREATIVIDAD & IA</span>
+                        <h3 class="font-display font-bold text-2xl text-white mt-1 mb-3">Diseño Gráfico, Motion Graphics & IA</h3>
+                        <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                            Elevamos la percepción de valor de tu negocio con diseño publicitario estratégico, animación digital e inteligencia artificial generativa para campañas inolvidables.
+                        </p>
+
+                        <ul class="space-y-3 text-sm text-slate-300 mb-8">
+                            <li class="flex items-start gap-2.5">
+                                <i class="ph-fill ph-check-circle text-energy-500 text-lg shrink-0 mt-0.5"></i>
+                                <span><strong>Identidad Visual & Logos:</strong> Creación y rediseño de marcas modernas y memorables.</span>
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <i class="ph-fill ph-check-circle text-energy-500 text-lg shrink-0 mt-0.5"></i>
+                                <span><strong>Motion Graphics & Reels IA:</strong> Videos publicitarios dinámicos con efectos visuales (VFX/CGI).</span>
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <i class="ph-fill ph-check-circle text-energy-500 text-lg shrink-0 mt-0.5"></i>
+                                <span><strong>Diseño Publicitario para Redes:</strong> Carruseles y piezas gráficas de alto impacto comercial.</span>
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <i class="ph-fill ph-check-circle text-energy-500 text-lg shrink-0 mt-0.5"></i>
+                                <span><strong>Fotografía de Producto con IA:</strong> Escenarios comerciales hiperrealistas sin costos de estudio.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <button onclick="selectServiceAndScroll('Diseño Gráfico, Motion & IA')" class="w-full py-3.5 px-5 rounded-xl bg-energy-500/15 hover:bg-energy-500 text-energy-400 hover:text-white border border-energy-500/40 font-display font-semibold text-sm flex items-center justify-center gap-2 transition-all">
+                        <span>Cotizar Diseño & Motion IA</span>
+                        <i class="ph-bold ph-arrow-up-right"></i>
+                    </button>
+                </div>
+
+                <!-- PILAR 3: ELECTRÓNICA & AUTOMATIZACIÓN -->
+                <div class="glass-card tilt-card rounded-3xl p-7 sm:p-8 flex flex-col justify-between relative overflow-hidden group" data-reveal="up" style="--delay: 300ms;">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 flex items-center justify-center text-emerald-400 text-3xl mb-6 group-hover:scale-110 transition-transform">
+                            <i class="ph-duotone ph-cpu"></i>
+                        </div>
+                        <span class="font-mono text-xs text-emerald-400 uppercase tracking-wider">PILAR 03 // HARDWARE & IOT</span>
+                        <h3 class="font-display font-bold text-2xl text-white mt-1 mb-3">Electrónica & Automatización IoT</h3>
+                        <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                            Llevamos el código al mundo físico. Desarrollamos proyectos electrónicos a medida, sensores inteligentes y sistemas de control remoto para negocios, agroindustria y locales.
+                        </p>
+
+                        <ul class="space-y-3 text-sm text-slate-300 mb-8">
+                            <li class="flex items-start gap-2.5">
+                                <i class="ph-fill ph-check-circle text-emerald-400 text-lg shrink-0 mt-0.5"></i>
+                                <span><strong>Automatización de Locales:</strong> Control inteligente de iluminación, letreros, climatización y accesos.</span>
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <i class="ph-fill ph-check-circle text-emerald-400 text-lg shrink-0 mt-0.5"></i>
+                                <span><strong>Sistemas con Microcontroladores:</strong> Desarrollo con ESP32, Arduino, sensores y actuadores.</span>
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <i class="ph-fill ph-check-circle text-emerald-400 text-lg shrink-0 mt-0.5"></i>
+                                <span><strong>Telemetría & Alertas Móviles:</strong> Monitoreo de temperatura, consumo o seguridad directo al celular.</span>
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <i class="ph-fill ph-check-circle text-emerald-400 text-lg shrink-0 mt-0.5"></i>
+                                <span><strong>Integración Web + Hardware:</strong> Controla dispositivos físicos desde una interfaz web personalizada.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <button onclick="selectServiceAndScroll('Electrónica & Automatización IoT')" class="w-full py-3.5 px-5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500 text-emerald-400 hover:text-space-950 border border-emerald-500/40 font-display font-bold text-sm flex items-center justify-center gap-2 transition-all">
+                        <span>Cotizar Proyecto Electrónico</span>
+                        <i class="ph-bold ph-arrow-up-right"></i>
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- SECCIÓN 4: DEMO INTERACTIVO IOT / HARDWARE -->
+        <!-- ========================================== -->
+        <section id="simulador-iot" class="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+            <div class="glass-card rounded-3xl p-6 sm:p-10 border border-electric-500/30 relative overflow-hidden" data-reveal="scale">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    
+                    <!-- Explicación del Simulador -->
+                    <div class="lg:col-span-5 space-y-4">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 font-mono text-xs">
+                            <i class="ph-fill ph-broadcast"></i>
+                            <span>DEMO INTERACTIVA EN VIVO</span>
+                        </div>
+                        <h3 class="font-display font-bold text-2xl sm:text-3xl text-white">
+                            ¿Cómo se integran una Página Web y la Electrónica en tu negocio?
+                        </h3>
+                        <p class="text-slate-300 text-sm leading-relaxed">
+                            En <strong>xDiciTech</strong> creamos interfaces web que se comunican en tiempo real con circuitos electrónicos (ESP32 / Relés / Sensores). <strong>Haz clic en los interruptores de prueba</strong> para ver cómo podrías controlar o monitorear tu local en Machala desde tu celular:
+                        </p>
+                        <div class="p-4 rounded-2xl bg-space-950/90 border border-slate-800 font-mono text-xs space-y-1.5">
+                            <div class="text-slate-400">// Registro de eventos IoT en tiempo real:</div>
+                            <div id="iot-console-log" class="text-emerald-400">
+                                &gt; [SISTEMA LISTO] Esperando comando del usuario...
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Panel de Control Simulado -->
+                    <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        
+                        <!-- Tarjeta 1: Control de Letrero Luminoso Comercial -->
+                        <div class="p-5 rounded-2xl bg-space-950/90 border border-slate-800 flex flex-col justify-between">
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="font-mono text-xs text-slate-400">RELÉ 01 • FACHADA</span>
+                                <button onclick="toggleIotSign()" id="btn-iot-sign" class="px-3 py-1 rounded-lg bg-electric-500 text-white font-mono text-xs font-semibold transition-all">
+                                    ENCENDIDO
+                                </button>
+                            </div>
+                            <div id="visual-iot-sign" class="my-3 py-4 px-3 rounded-xl border-2 border-electric-500 text-center font-display font-bold text-lg tracking-wider text-white neon-sign-active transition-all">
+                                TU NEGOCIO ABIERTO
+                            </div>
+                            <p class="text-xs text-slate-400 mt-2">
+                                Automatiza el encendido de letreros y vitrinas por horario o desde tu smartphone en cualquier lugar.
+                            </p>
+                        </div>
+
+                        <!-- Tarjeta 2: Sensor de Temperatura / Cuarto Frío / Rack -->
+                        <div class="p-5 rounded-2xl bg-space-950/90 border border-slate-800 flex flex-col justify-between">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="font-mono text-xs text-slate-400">SENSOR DHT22 / SONDA</span>
+                                <span id="badge-iot-temp" class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-mono text-[11px]">ÓPTIMO</span>
+                            </div>
+                            <div class="my-2 flex items-baseline justify-between">
+                                <span id="val-iot-temp" class="font-display font-bold text-4xl text-white">21.4°C</span>
+                                <button onclick="simulateTempAlert()" class="px-3 py-1.5 rounded-xl bg-space-800 hover:bg-energy-500/20 text-energy-400 border border-energy-500/40 font-mono text-xs transition-all">
+                                    Simular Alerta Térmica
+                                </button>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-2">
+                                Ideal para restaurantes, farmacias, servidores, camaroneras o cuartos fríos: recibe una alerta inmediata en WhatsApp si sube la temperatura.
+                            </p>
+                        </div>
+
+                        <!-- Tarjeta 3: Contador de Clientes / Sensor de Puerta -->
+                        <div class="sm:col-span-2 p-5 rounded-2xl bg-space-950/90 border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <span class="font-mono text-xs text-electric-400">SENSOR LÁSER / PROXIMIDAD</span>
+                                    <span class="text-xs text-slate-500">•</span>
+                                    <span class="font-mono text-xs text-slate-300">Visitas detectadas hoy: <strong id="val-iot-counter" class="text-white text-sm">48</strong></span>
+                                </div>
+                                <p class="text-xs text-slate-400 mt-1">
+                                    Integra sensores de movimiento o apertura con avisos sonoros y registro estadístico en la nube.
+                                </p>
+                            </div>
+                            <button onclick="simulateVisitorPulse()" class="shrink-0 px-4 py-2.5 rounded-xl bg-electric-500/20 hover:bg-electric-500 text-electric-400 hover:text-white border border-electric-500/40 font-mono text-xs font-semibold flex items-center gap-2 transition-all">
+                                <i class="ph-bold ph-user-plus"></i>
+                                <span>Simular Paso de Cliente</span>
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- SECCIÓN 5: PORTAFOLIO FILTRABLE            -->
+        <!-- ========================================== -->
+        <section id="portafolio" class="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6" data-reveal="up">
+                <div>
+                    <span class="font-mono text-xs text-electric-400 uppercase tracking-widest">// PROYECTOS & CAPACIDAD TÉCNICA</span>
+                    <h2 class="font-display font-bold text-3xl sm:text-5xl text-white mt-2">Portafolio Destacado</h2>
+                </div>
+
+                <!-- Botones de Filtro -->
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="filterPortfolio('all')" id="filter-all" class="px-4 py-2 rounded-xl font-mono text-xs font-semibold bg-electric-500 text-white transition-all">
+                        Todos (8)
+                    </button>
+                    <button onclick="filterPortfolio('web')" id="filter-web" class="px-4 py-2 rounded-xl font-mono text-xs font-semibold bg-space-800 text-slate-300 hover:text-white border border-slate-700 transition-all">
+                        Desarrollo Web
+                    </button>
+                    <button onclick="filterPortfolio('design')" id="filter-design" class="px-4 py-2 rounded-xl font-mono text-xs font-semibold bg-space-800 text-slate-300 hover:text-white border border-slate-700 transition-all">
+                        Diseño & Motion IA
+                    </button>
+                    <button onclick="filterPortfolio('iot')" id="filter-iot" class="px-4 py-2 rounded-xl font-mono text-xs font-semibold bg-space-800 text-slate-300 hover:text-white border border-slate-700 transition-all">
+                        Electrónica & IoT
+                    </button>
+                </div>
+            </div>
+
+            <!-- Grid de Proyectos (Renderizado dinámicamente por JS) -->
+            <div id="portfolio-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- SECCIÓN 6: COTIZADOR INTERACTIVO (3 PASOS) -->
+        <!-- ========================================== -->
+        <section id="cotizador" class="py-20 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+            <div class="glass-card rounded-3xl p-6 sm:p-10 md:p-12 border border-electric-500/40 shadow-2xl relative overflow-hidden" data-reveal="up">
+                
+                <div class="text-center max-w-2xl mx-auto mb-10">
+                    <span class="px-3.5 py-1.5 rounded-full bg-energy-500/15 border border-energy-500/30 text-energy-400 font-mono text-xs">
+                        RESPUESTA DIRECTA CON PEDRO CRUZ
+                    </span>
+                    <h2 class="font-display font-bold text-3xl sm:text-4xl text-white mt-3">
+                        Arma el Brief de tu Proyecto en 30 Segundos
+                    </h2>
+                    <p class="text-slate-300 text-sm sm:text-base mt-2">
+                        Selecciona lo que necesitas y el sistema generará tu solicitud estructurada lista para enviarla por WhatsApp sin esperas.
+                    </p>
+                </div>
+
+                <div class="space-y-8">
+                    <!-- PASO 1: Categoría Principal -->
+                    <div>
+                        <label class="block font-mono text-xs uppercase text-electric-400 mb-3">
+                            PASO 1 • ¿QUÉ ÁREA DE XDICITECH NECESITAS?
+                        </label>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3" id="quote-category-group">
+                            <button type="button" onclick="setQuoteCategory('Desarrollo Web & Sistemas')" data-cat="Desarrollo Web & Sistemas" class="quote-cat-btn p-4 rounded-2xl border border-electric-500 bg-electric-500/20 text-left transition-all">
+                                <i class="ph-duotone ph-globe text-2xl text-electric-400 mb-1"></i>
+                                <div class="font-display font-bold text-sm text-white">Desarrollo Web</div>
+                                <div class="text-[11px] text-slate-300">Landing, Catálogo o PWA</div>
+                            </button>
+                            <button type="button" onclick="setQuoteCategory('Diseño Gráfico, Motion & IA')" data-cat="Diseño Gráfico, Motion & IA" class="quote-cat-btn p-4 rounded-2xl border border-slate-800 bg-space-950/70 hover:border-slate-600 text-left transition-all">
+                                <i class="ph-duotone ph-paint-brush-broad text-2xl text-energy-400 mb-1"></i>
+                                <div class="font-display font-bold text-sm text-white">Diseño & Motion IA</div>
+                                <div class="text-[11px] text-slate-400">Branding, Reels IA, Ads</div>
+                            </button>
+                            <button type="button" onclick="setQuoteCategory('Electrónica & Automatización IoT')" data-cat="Electrónica & Automatización IoT" class="quote-cat-btn p-4 rounded-2xl border border-slate-800 bg-space-950/70 hover:border-slate-600 text-left transition-all">
+                                <i class="ph-duotone ph-cpu text-2xl text-emerald-400 mb-1"></i>
+                                <div class="font-display font-bold text-sm text-white">Electrónica / IoT</div>
+                                <div class="text-[11px] text-slate-400">Sensores, Control, PCB</div>
+                            </button>
+                            <button type="button" onclick="setQuoteCategory('Pack Integral (Web + Diseño + Tech)')" data-cat="Pack Integral (Web + Diseño + Tech)" class="quote-cat-btn p-4 rounded-2xl border border-slate-800 bg-space-950/70 hover:border-slate-600 text-left transition-all">
+                                <i class="ph-duotone ph-rocket-launch text-2xl text-purple-400 mb-1"></i>
+                                <div class="font-display font-bold text-sm text-white">Proyecto Integral</div>
+                                <div class="text-[11px] text-slate-400">Marca + Web + Automatización</div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- PASO 2: Alcance y Urgencia -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block font-mono text-xs uppercase text-electric-400 mb-2">
+                                PASO 2 • TU NOMBRE O NEGOCIO EN MACHALA / ECUADOR
+                            </label>
+                            <input type="text" id="quote-name" oninput="updateWhatsAppPreview()" placeholder="Ej. Carlos Mendoza - Importadora El Oro" class="w-full px-4 py-3.5 rounded-xl bg-space-950 border border-slate-700 focus:border-electric-500 focus:outline-none text-sm text-white placeholder-slate-500">
+                        </div>
+                        <div>
+                            <label class="block font-mono text-xs uppercase text-electric-400 mb-2">
+                                PRIORIDAD / TIEMPO ESTIMADO
+                            </label>
+                            <select id="quote-urgency" onchange="updateWhatsAppPreview()" class="w-full px-4 py-3.5 rounded-xl bg-space-950 border border-slate-700 focus:border-electric-500 focus:outline-none text-sm text-white">
+                                <option value="Lo antes posible (Esta semana)">🚀 Lo antes posible (Iniciar esta semana)</option>
+                                <option value="En las próximas 2 a 3 semanas">📅 En las próximas 2 a 3 semanas</option>
+                                <option value="Estoy planificando y cotizando opciones">💡 Estoy planificando y cotizando opciones</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- PASO 3: Detalles adicionales y Vista Previa del Mensaje -->
+                    <div>
+                        <label class="block font-mono text-xs uppercase text-electric-400 mb-2">
+                            PASO 3 • CUÉNTAME BREVEMENTE TU IDEA (OPCIONAL)
+                        </label>
+                        <textarea id="quote-details" rows="2" oninput="updateWhatsAppPreview()" placeholder="Ej. Quiero una página web con catálogo de productos y automatizar las luces de mi local..." class="w-full px-4 py-3 rounded-xl bg-space-950 border border-slate-700 focus:border-electric-500 focus:outline-none text-sm text-white placeholder-slate-500"></textarea>
+                    </div>
+
+                    <!-- Vista Previa del Brief Generado -->
+                    <div class="p-4 rounded-2xl bg-space-950/90 border border-slate-800">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-mono text-[11px] text-slate-400">VISTA PREVIA DEL MENSAJE FORMATEADO:</span>
+                            <button type="button" onclick="copyBriefToClipboard()" class="text-xs font-mono text-electric-400 hover:text-electric-300 flex items-center gap-1">
+                                <i class="ph-bold ph-copy"></i>
+                                <span id="copy-btn-text">Copiar texto</span>
+                            </button>
+                        </div>
+                        <p id="whatsapp-preview-box" class="font-mono text-xs text-slate-300 whitespace-pre-line leading-relaxed"></p>
+                    </div>
+
+                    <!-- Botones de Envío -->
+                    <div class="flex flex-col sm:flex-row items-center gap-4 pt-2">
+                        <button type="button" onclick="sendQuoteViaWhatsApp()" class="w-full sm:flex-1 py-4 px-6 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-space-950 font-display font-bold text-base shadow-xl shadow-emerald-500/20 flex items-center justify-center gap-3 transition-all">
+                            <i class="ph-fill ph-whatsapp-logo text-2xl"></i>
+                            <span>Enviar Cotización por WhatsApp</span>
+                        </button>
+                        <a href="https://www.instagram.com/xdicitech/" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto py-4 px-6 rounded-2xl bg-space-800 hover:bg-space-700 text-white font-display font-semibold text-sm border border-slate-700 flex items-center justify-center gap-2 transition-all">
+                            <i class="ph-bold ph-instagram-logo text-pink-400 text-xl"></i>
+                            <span>Mensaje en @xdicitech</span>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- ========================================== -->
+    <!-- FOOTER                                     -->
+    <!-- ========================================== -->
+    <footer class="border-t border-slate-800/80 bg-space-950 py-12 px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 flex items-center justify-center">
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <circle cx="50" cy="50" r="46" fill="#050B14" stroke="#0066FF" stroke-width="5" />
+                        <polygon points="18,18 47,44 82,82 53,56" fill="#0066FF" />
+                        <path d="M58 28 C64 22, 73 22, 78 27 C83 32, 83 41, 77 47 L67 57 L52 42 Z" fill="#FFFFFF" />
+                        <path d="M42 72 C36 78, 27 78, 22 73 C17 68, 17 59, 23 53 L33 43 L48 58 Z" fill="#FFFFFF" />
+                        <circle cx="50" cy="50" r="8" fill="#FFFFFF" />
+                    </svg>
+                </div>
+                <div>
+                    <span class="font-display font-bold text-white">xDiciTech</span>
+                    <span class="text-slate-500 mx-2">|</span>
+                    <span class="text-xs text-slate-400">Pedro Cruz • Machala, El Oro, Ecuador</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4 text-sm text-slate-400">
+                <button onclick="toggleBioModal(true)" class="hover:text-electric-400 transition-colors font-mono text-xs">
+                    [Ver Modo Bio IG]
+                </button>
+                <a href="404.html" class="hover:text-rose-400 transition-colors font-mono text-xs">
+                    [Ver 404 Espacial]
+                </a>
+                <a href="https://www.instagram.com/xdicitech/" target="_blank" rel="noopener noreferrer" class="hover:text-white flex items-center gap-1.5 transition-colors">
+                    <i class="ph-fill ph-instagram-logo text-lg text-electric-400"></i>
+                    <span>@xdicitech</span>
+                </a>
+            </div>
+
+            <p class="text-xs text-slate-500 font-mono">
+                SpaceX + Diseño + Ciencia + Tech © 2026
+            </p>
+        </div>
+    </footer>
+
+    <!-- ========================================================== -->
+    <!-- CONTROLADOR FLOTANTE DE ANIMACIONES SCROLL (DEMO / REPLAY) -->
+    <!-- ========================================================== -->
+    <div class="fixed bottom-4 left-4 z-40 flex items-center gap-1.5 p-1.5 rounded-2xl bg-space-950/90 backdrop-blur-xl border border-electric-500/35 shadow-2xl">
+        <button onclick="replayScrollAnimations()" class="px-3 py-1.5 rounded-xl bg-electric-500/20 hover:bg-electric-500 text-electric-400 hover:text-white font-mono text-[11px] font-semibold flex items-center gap-1.5 transition-all" title="Repetir las animaciones de entrada de la vista actual">
+            <i class="ph-bold ph-arrows-clockwise"></i>
+            <span>Replay Scroll FX</span>
+        </button>
+        <button onclick="toggleAnimationSpeed()" id="btn-fx-speed" class="px-2.5 py-1.5 rounded-xl bg-space-800 hover:bg-space-700 text-slate-300 font-mono text-[11px] transition-all" title="Cambiar velocidad de transición">
+            Modo: Turbo ⚡
+        </button>
+        <button onclick="RocketLoader.show({ title: 'DESPEGUE XDICITECH', subtitle: 'Demostración de ventana de espera y telemetría...', duration: 3000 })" class="px-2.5 py-1.5 rounded-xl bg-energy-500/20 hover:bg-energy-500 text-energy-400 hover:text-white font-mono text-[11px] flex items-center gap-1 transition-all" title="Ver animación de cohete despegando">
+            <i class="ph-fill ph-rocket-launch"></i>
+            <span>Despegue 🚀</span>
+        </button>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MODAL 1: MODO BIO IG (REEMPLAZO LINKTREE)  -->
+    <!-- ========================================== -->
+    <div id="bio-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-space-950/85 backdrop-blur-md">
+        <div class="glass-card w-full max-w-md rounded-3xl p-6 border border-electric-500/40 shadow-2xl relative animate-fadeIn">
+            <button onclick="toggleBioModal(false)" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-space-800 hover:bg-space-700 text-slate-300 flex items-center justify-center">
+                <i class="ph-bold ph-x"></i>
+            </button>
+
+            <!-- Cabecera estilo Perfil de Instagram Mejorado -->
+            <div class="text-center pt-2 pb-6">
+                <div class="w-20 h-20 mx-auto mb-3 logo-glow">
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <circle cx="50" cy="50" r="46" fill="#050B14" stroke="#0066FF" stroke-width="4.5" />
+                        <polygon points="18,18 47,44 82,82 53,56" fill="#0066FF" />
+                        <path d="M58 28 C64 22, 73 22, 78 27 C83 32, 83 41, 77 47 L67 57 L52 42 Z" fill="#FFFFFF" />
+                        <circle cx="63" cy="46" r="4.2" fill="#0066FF" />
+                        <path d="M42 72 C36 78, 27 78, 22 73 C17 68, 17 59, 23 53 L33 43 L48 58 Z" fill="#FFFFFF" />
+                        <circle cx="37" cy="54" r="4.2" fill="#0066FF" />
+                        <circle cx="50" cy="50" r="8" fill="#FFFFFF" stroke="#050B14" stroke-width="2.5" />
+                    </svg>
+                </div>
+                <h3 class="font-display font-bold text-xl text-white">@xdicitech</h3>
+                <p class="text-xs font-mono text-electric-400 mt-0.5">Pedro Cruz | Ingeniería & Creatividad Digital</p>
+                <p class="text-xs text-slate-300 mt-2">📍 Machala, EC • Web, Diseño IA & Automatización</p>
+            </div>
+
+            <!-- Enlaces rápidos de alta conversión -->
+            <div class="space-y-3">
+                <button onclick="toggleBioModal(false); selectServiceAndScroll('Desarrollo Web & Sistemas');" class="w-full p-3.5 rounded-2xl bg-electric-500/20 hover:bg-electric-500 text-white border border-electric-500/40 flex items-center justify-between group transition-all">
+                    <div class="flex items-center gap-3">
+                        <i class="ph-duotone ph-code text-2xl text-electric-400 group-hover:text-white"></i>
+                        <div class="text-left">
+                            <div class="font-display font-bold text-sm">Cotizar Página Web / Sistema</div>
+                            <div class="text-[11px] text-slate-300 group-hover:text-white/90">Landing pages, Catálogos, PWAs</div>
+                        </div>
+                    </div>
+                    <i class="ph-bold ph-caret-right"></i>
+                </button>
+
+                <button onclick="toggleBioModal(false); selectServiceAndScroll('Diseño Gráfico, Motion & IA');" class="w-full p-3.5 rounded-2xl bg-energy-500/15 hover:bg-energy-500 text-white border border-energy-500/40 flex items-center justify-between group transition-all">
+                    <div class="flex items-center gap-3">
+                        <i class="ph-duotone ph-sparkle text-2xl text-energy-400 group-hover:text-white"></i>
+                        <div class="text-left">
+                            <div class="font-display font-bold text-sm">Diseño Publicitario, Logos & Motion IA</div>
+                            <div class="text-[11px] text-slate-300 group-hover:text-white/90">Reels comerciales con IA y Branding</div>
+                        </div>
+                    </div>
+                    <i class="ph-bold ph-caret-right"></i>
+                </button>
+
+                <button onclick="toggleBioModal(false); selectServiceAndScroll('Electrónica & Automatización IoT');" class="w-full p-3.5 rounded-2xl bg-emerald-500/15 hover:bg-emerald-500 text-white hover:text-space-950 border border-emerald-500/40 flex items-center justify-between group transition-all">
+                    <div class="flex items-center gap-3">
+                        <i class="ph-duotone ph-cpu text-2xl text-emerald-400 group-hover:text-space-950"></i>
+                        <div class="text-left">
+                            <div class="font-display font-bold text-sm">Proyectos de Electrónica & IoT</div>
+                            <div class="text-[11px] text-slate-300 group-hover:text-space-950/80">Automatización, ESP32, Sensores</div>
+                        </div>
+                    </div>
+                    <i class="ph-bold ph-caret-right"></i>
+                </button>
+
+                <button onclick="sendDirectWhatsApp()" class="w-full p-3.5 rounded-2xl bg-space-800 hover:bg-space-700 text-white border border-slate-700 flex items-center justify-between transition-all">
+                    <div class="flex items-center gap-3">
+                        <i class="ph-fill ph-whatsapp-logo text-2xl text-emerald-400"></i>
+                        <div class="text-left">
+                            <div class="font-display font-bold text-sm">Hablar directo por WhatsApp</div>
+                            <div class="text-[11px] text-slate-400">Atención personalizada con Pedro Cruz</div>
+                        </div>
+                    </div>
+                    <i class="ph-bold ph-arrow-up-right"></i>
+                </button>
+            </div>
+
+            <div class="mt-5 pt-4 border-t border-slate-800 text-center">
+                <button onclick="toggleBioModal(false)" class="text-xs font-mono text-electric-400 hover:underline">
+                    Explorar la Web Completa →
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MODAL 2: DETALLE DE PROYECTO PORTAFOLIO    -->
+    <!-- ========================================== -->
+    <div id="project-modal" onclick="if(event.target === this) closeProjectModal()" class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-5 md:p-6 bg-space-950/85 backdrop-blur-md">
+        <div id="project-modal-dialog" class="glass-card w-full max-w-xl md:max-w-4xl max-h-[92vh] overflow-y-auto modal-scrollbar rounded-3xl p-5 sm:p-7 md:p-8 border border-electric-500/40 shadow-2xl relative my-auto">
+            <button onclick="closeProjectModal()" class="sticky top-0 float-right z-30 w-9 h-9 -mr-1 -mt-1 rounded-full bg-space-800/90 hover:bg-space-700 text-slate-300 hover:text-white border border-slate-700 flex items-center justify-center backdrop-blur-md transition-colors" title="Cerrar ventana">
+                <i class="ph-bold ph-x text-base"></i>
+            </button>
+            <div id="project-modal-content"></div>
+        </div>
+    </div>
+
+    <!-- Scripts Modulares -->
+    <script src="js/scroll-fx.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

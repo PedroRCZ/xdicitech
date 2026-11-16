@@ -1,0 +1,410 @@
+/* ==========================================================================
+   xDiciTech - Hoja de Estilos de Producción
+   Variables, Estilos Base, Glassmorphism, Bento Grid & Scroll Reveal Engine
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. VARIABLES GLOBALES (DESIGN TOKENS)
+   -------------------------------------------------------------------------- */
+:root {
+    /* Variables de Control de Animación */
+    --reveal-duration: 0.85s;
+    --mouse-x: -500px;
+    --mouse-y: -500px;
+    --grid-offset: 0px;
+
+    /* Colores Principales (Brand Tokens) */
+    --space-950: #040911;
+    --space-900: #060E1A;
+    --space-800: #0A1628;
+    --space-700: #10223E;
+
+    --electric-400: #3B82F6;
+    --electric-500: #0066FF;
+    --electric-600: #0052CC;
+
+    --energy-400: #FF8533;
+    --energy-500: #FF6B00;
+    --energy-600: #CC5500;
+}
+
+/* --------------------------------------------------------------------------
+   2. ESTILOS BASE Y SCROLL
+   -------------------------------------------------------------------------- */
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: #060E1A;
+    color: #F8FAFC;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    overflow-x: hidden;
+}
+
+::selection {
+    background-color: #0066FF;
+    color: #FFFFFF;
+}
+
+/* Fondo de cuadrícula espacial con parallax dinámico */
+.bg-space-grid {
+    background-size: 46px 46px;
+    background-image: 
+        linear-gradient(to right, rgba(0, 102, 255, 0.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 102, 255, 0.06) 1px, transparent 1px);
+    background-position: 0px var(--grid-offset, 0px);
+    transition: background-position 0.08s linear;
+}
+
+/* --------------------------------------------------------------------------
+   3. TARJETAS GLASSMORPHISM & SPOTLIGHT RADIAL (BENTO GRID)
+   -------------------------------------------------------------------------- */
+.glass-card {
+    background: rgba(12, 25, 46, 0.72);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(0, 102, 255, 0.18);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease, box-shadow 0.35s ease;
+    position: relative;
+}
+
+.glass-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(
+        520px circle at var(--mouse-x, -500px) var(--mouse-y, -500px),
+        rgba(0, 102, 255, 0.16),
+        transparent 45%
+    );
+    pointer-events: none;
+    z-index: 0;
+    transition: opacity 0.3s ease;
+}
+
+.glass-card > * {
+    position: relative;
+    z-index: 1;
+}
+
+.glass-card:hover {
+    border-color: rgba(0, 102, 255, 0.5);
+    box-shadow: 0 16px 40px -12px rgba(0, 102, 255, 0.26);
+}
+
+.glass-card-orange::before {
+    background: radial-gradient(
+        520px circle at var(--mouse-x, -500px) var(--mouse-y, -500px),
+        rgba(255, 107, 0, 0.16),
+        transparent 45%
+    );
+}
+
+.glass-card-orange:hover {
+    border-color: rgba(255, 107, 0, 0.55);
+    box-shadow: 0 16px 40px -12px rgba(255, 107, 0, 0.25);
+}
+
+/* Tarjetas 3D Tilt */
+.tilt-card {
+    will-change: transform;
+    transform-style: preserve-3d;
+}
+
+/* --------------------------------------------------------------------------
+   4. MOTOR DE ANIMACIONES SCROLL REVEAL
+   -------------------------------------------------------------------------- */
+[data-reveal] {
+    opacity: 0;
+    filter: blur(10px);
+    transition: 
+        opacity var(--reveal-duration, 0.85s) cubic-bezier(0.16, 1, 0.3, 1),
+        transform var(--reveal-duration, 0.85s) cubic-bezier(0.16, 1, 0.3, 1),
+        filter var(--reveal-duration, 0.85s) cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: var(--delay, 0ms);
+    will-change: opacity, transform, filter;
+}
+
+[data-reveal="up"] {
+    transform: translateY(44px) scale(0.97);
+}
+
+[data-reveal="left"] {
+    transform: translateX(-48px) scale(0.98);
+}
+
+[data-reveal="right"] {
+    transform: translateX(48px) scale(0.98);
+}
+
+[data-reveal="scale"] {
+    transform: perspective(900px) rotateX(10deg) translateY(36px) scale(0.93);
+}
+
+[data-reveal].is-visible {
+    opacity: 1;
+    filter: blur(0px);
+    transform: perspective(900px) rotateX(0deg) translate(0, 0) scale(1);
+}
+
+/* --------------------------------------------------------------------------
+   5. EFECTOS SVG, LOGO Y CIRCUITOS
+   -------------------------------------------------------------------------- */
+/* Trazado del circuito ADN al hacer scroll */
+.adn-circuit-line {
+    stroke-dasharray: 1200;
+    stroke-dashoffset: 1200;
+    transition: stroke-dashoffset 1.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.adn-circuit-line.drawn {
+    stroke-dashoffset: 0;
+}
+
+/* Animación de pulso en el logo */
+@keyframes orbitPulse {
+    0%, 100% { filter: drop-shadow(0 0 6px rgba(0, 102, 255, 0.7)); }
+    50% { filter: drop-shadow(0 0 15px rgba(0, 102, 255, 1)); }
+}
+
+.logo-glow {
+    animation: orbitPulse 3.5s infinite ease-in-out;
+}
+
+/* --------------------------------------------------------------------------
+   6. COMPONENTES INTERACTIVOS (SIMULADOR IOT & MODAL)
+   -------------------------------------------------------------------------- */
+/* Efecto neón para el simulador de letrero comercial */
+.neon-sign-active {
+    text-shadow: 0 0 8px #0066FF, 0 0 18px #0066FF, 0 0 32px #3B82F6;
+    border-color: #0066FF !important;
+    box-shadow: inset 0 0 20px rgba(0, 102, 255, 0.25), 0 0 25px rgba(0, 102, 255, 0.35);
+}
+
+/* Animación para apertura de modal */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.animate-fadeIn {
+    animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* --------------------------------------------------------------------------
+   7. SCROLLBAR PERSONALIZADA
+   -------------------------------------------------------------------------- */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #040911;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #10223E;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 102, 255, 0.3);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #0066FF;
+}
+
+/* --------------------------------------------------------------------------
+   8. ANIMACIONES Y VENTANA DE ESPERA: COHETE DESPEGANDO (ROCKET LAUNCH)
+   -------------------------------------------------------------------------- */
+/* Vibración realista de empuje de cohete */
+@keyframes rocketRumble {
+    0%, 100% {
+        transform: translate3d(0, 0, 0);
+    }
+    20% {
+        transform: translate3d(-1px, 0.8px, 0);
+    }
+    40% {
+        transform: translate3d(1.2px, -0.6px, 0);
+    }
+    60% {
+        transform: translate3d(-0.8px, -0.8px, 0);
+    }
+    80% {
+        transform: translate3d(1px, 0.6px, 0);
+    }
+}
+
+.rocket-vibration {
+    animation: rocketRumble 0.1s infinite linear;
+    transform-origin: center center;
+}
+
+/* Pulso y estiramiento de la llama del propulsor */
+@keyframes flamePulse {
+    0%, 100% {
+        transform: scaleY(1) scaleX(1);
+        filter: drop-shadow(0 8px 16px rgba(255, 107, 0, 0.85));
+    }
+    50% {
+        transform: scaleY(1.22) scaleX(0.92);
+        filter: drop-shadow(0 14px 28px rgba(255, 133, 51, 1));
+    }
+}
+
+.rocket-flame {
+    animation: flamePulse 0.14s infinite alternate ease-in-out;
+    transform-origin: top center;
+}
+
+/* Núcleo de plasma blanco/cian hipercaliente */
+@keyframes plasmaFlicker {
+    0%, 100% {
+        opacity: 0.95;
+        transform: scaleY(1);
+    }
+    50% {
+        opacity: 0.75;
+        transform: scaleY(1.3);
+    }
+}
+
+.rocket-plasma {
+    animation: plasmaFlicker 0.08s infinite alternate ease-in-out;
+    transform-origin: top center;
+}
+
+/* Estelas de velocidad descendentes para sensación de ascenso vertiginoso */
+@keyframes speedStream {
+    0% {
+        transform: translateY(-80px);
+        opacity: 0;
+    }
+    30% {
+        opacity: 0.9;
+    }
+    100% {
+        transform: translateY(320px);
+        opacity: 0;
+    }
+}
+
+.speed-stream-line {
+    position: absolute;
+    width: 2px;
+    border-radius: 9999px;
+    background: linear-gradient(to bottom, transparent, #0066FF, #00E5FF, transparent);
+    animation: speedStream var(--stream-speed, 0.8s) infinite linear;
+    animation-delay: var(--stream-delay, 0s);
+    pointer-events: none;
+}
+
+/* Humo y partículas de escape en la base */
+@keyframes smokeBillow {
+    0% {
+        transform: scale(0.6) translateY(0);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(1.6) translateY(40px);
+        opacity: 0;
+    }
+}
+
+.smoke-cloud {
+    animation: smokeBillow 1.2s infinite ease-out;
+    transform-origin: center top;
+}
+
+/* --------------------------------------------------------------------------
+   9. ELEMENTOS VISUALES ESPACIALES PARA PÁGINA 404
+   -------------------------------------------------------------------------- */
+/* Flotación antigravedad suave */
+@keyframes spaceFloat {
+    0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-14px) rotate(2deg);
+    }
+}
+
+.space-float {
+    animation: spaceFloat 5s infinite ease-in-out;
+}
+
+/* Baliza orbital de alerta */
+@keyframes beaconPulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(255, 107, 0, 0.6);
+    }
+    50% {
+        box-shadow: 0 0 0 10px rgba(255, 107, 0, 0);
+    }
+}
+
+.orbital-beacon {
+    animation: beaconPulse 1.8s infinite;
+}
+
+/* Barrido de radar aeroespacial */
+@keyframes radarSweep {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.radar-sweep-line {
+    animation: radarSweep 4s infinite linear;
+    transform-origin: center center;
+}
+
+/* Respeto por preferencias de movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+    .rocket-vibration,
+    .rocket-flame,
+    .rocket-plasma,
+    .speed-stream-line,
+    .smoke-cloud,
+    .space-float,
+    .radar-sweep-line {
+        animation: none !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   10. SCROLLBAR ESTILIZADO PARA MODALES
+   -------------------------------------------------------------------------- */
+.modal-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 102, 255, 0.4) rgba(4, 9, 17, 0.6);
+}
+
+.modal-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modal-scrollbar::-webkit-scrollbar-track {
+    background: rgba(4, 9, 17, 0.6);
+    border-radius: 9999px;
+}
+
+.modal-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(0, 102, 255, 0.4);
+    border-radius: 9999px;
+}
+
+.modal-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 102, 255, 0.8);
+}
+
